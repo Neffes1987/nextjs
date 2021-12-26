@@ -2,8 +2,16 @@ import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import Link from "next/link";
+import {GetStaticProps} from "next";
+import {getAllPostData} from "../lib/Posts/posts.utils";
+import {PostItem} from "../lib/Posts/posts.interface";
 
-const Home: NextPage = () => {
+export interface HomeProps {
+  posts: PostItem[]
+}
+
+const Home: NextPage<HomeProps> = ({posts}) => {
   return (
     <div className={styles.container}>
       <Head>
@@ -13,9 +21,7 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+        <Link href='/about'> About us </Link>
 
         <p className={styles.description}>
           Get started by editing{' '}
@@ -51,6 +57,19 @@ const Home: NextPage = () => {
             </p>
           </a>
         </div>
+
+        <div>
+          <h2>Blog</h2>
+          <ul>
+            {posts.map(({id, title}) => (
+              <li key={id}>
+                <Link href={`/posts/${id}`}>
+                  <a>{title}</a>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
       </main>
 
       <footer className={styles.footer}>
@@ -67,6 +86,14 @@ const Home: NextPage = () => {
       </footer>
     </div>
   )
+}
+
+export async function getStaticProps(props: GetStaticProps){
+  return {
+    props : {
+      posts: getAllPostData()
+    }
+  }
 }
 
 export default Home
